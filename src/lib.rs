@@ -4,7 +4,7 @@ use std::{
 };
 
 #[derive(Debug, Default)]
-struct Output {
+pub struct Output {
     total: f64,
     aval: f64,
     free: f64,
@@ -13,7 +13,7 @@ struct Output {
 }
 
 impl Output {
-    fn parse_from_file(&mut self) {
+    pub fn parse_from_file(&mut self) {
         let file = "/proc/meminfo";
         let fh = std::fs::File::open(file);
         match fh {
@@ -88,6 +88,8 @@ fn parse_line(to_parse: &str) -> Result<f64, std::io::Error> {
         "Could not parse any value please check your input",
     ))
 }
+
+#[allow(dead_code)]
 fn main() {
     let mut out = Output::default();
     loop {
