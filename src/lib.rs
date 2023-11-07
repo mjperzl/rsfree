@@ -66,6 +66,13 @@ impl Output {
 
 impl Display for Output {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let now = std::time::SystemTime::now();
+        let ts = now
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("We get Back in Time!")
+            .as_millis();
+
+        write!(f, "{:?}: ", ts)?;
         write!(f, "Toatal: {:.2}Gb\t", self.total / (1024.0 * 1024.0))?;
         write!(f, "Avalible: {:.2}Gb\t", self.aval / (1024.0 * 1024.0))?;
         write!(f, "Free: {:.2}Gb\t", self.free / (1024.0 * 1024.0))?;
@@ -89,12 +96,19 @@ fn parse_line(to_parse: &str) -> Result<f64, std::io::Error> {
     ))
 }
 
-#[allow(dead_code)]
-fn main() {
-    let mut out = Output::default();
-    loop {
-        out.parse_from_file();
-        println!("{}", out);
-        std::thread::sleep(std::time::Duration::from_secs(10));
+pub fn get_memory_info() -> Output {
+    let mut output = Output::default();
+    output.parse_from_file();
+    output
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_memory_info() {
+        let mem_info = get_memory_info();
+        println!("Mem Info: {}", mem_info);
     }
 }
